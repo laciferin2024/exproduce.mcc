@@ -28,12 +28,24 @@ contract OptionsContract is Ownable {
     // Payment token (e.g., USDC)
     IERC20 public paymentToken;
     
+    // Address of the OptionsMarket contract
+    address public optionsMarket;
+    
     event OptionCreated(uint256 indexed optionId, address indexed farmer, address indexed bank, uint256 strikePrice, uint256 premium, uint256 expiryDate);
     event OptionExercised(uint256 indexed optionId, address indexed farmer, address indexed bank);
     event OptionCancelled(uint256 indexed optionId);
+    event OptionTransferred(uint256 indexed optionId, address indexed from, address indexed to);
 
     constructor(address _paymentToken) Ownable(msg.sender) {
         paymentToken = IERC20(_paymentToken);
+    }
+    
+    /**
+     * @dev Set the OptionsMarket contract address
+     * Only the owner can call this
+     */
+    function setOptionsMarket(address _optionsMarket) external onlyOwner {
+        optionsMarket = _optionsMarket;
     }
 
     /**
@@ -109,6 +121,38 @@ contract OptionsContract is Ownable {
         option.cancelled = true;
         
         emit OptionCancelled(_optionId);
+    }
+    
+    /**
+     * @dev Transfer option ownership
+     * Can only be called by the OptionsMarket contract
+     */
+    function transferOptionOwnership(uint256 _optionId, address _newOwner) external {
+        require(msg.sender == optionsMarket, "Only OptionsMarket can transfer");
+        
+        Option storage option = options[_optionId];
+        require(!option.exercised, "Option already exercised");
+        require(!option.cancelled, "Option already cancelled");
+        
+        address oldOwner = option.farmer;
+        option.farmer = _newOwner;
+        
+        // Update the farmerOptions mappings
+        // Remove from old owner
+        uint256[] storage oldOwnerOptions = farmerOptions[oldOwner];
+        for (uint256 i = 0; i < oldOwnerOptions.length; i++) {
+            if (oldOwnerOptions[i] == _optionId) {
+                // Replace with the last element and pop
+                oldOwnerOptions[i] = oldOwnerOptions[oldOwnerOptions.length - 1];
+                oldOwnerOptions.pop();
+                break;
+            }
+        }
+        
+        // Add to new owner
+        farmerOptions[_newOwner].push(_optionId);
+        
+        emit OptionTransferred(_optionId, oldOwner, _newOwner);
     }
     
     /**

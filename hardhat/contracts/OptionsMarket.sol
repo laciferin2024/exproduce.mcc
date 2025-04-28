@@ -2,56 +2,151 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "./OptionsContract.sol";
 
-contract OptionsMarket {
-    IERC20 public paymentToken;
-    OptionsContract public optionsContract;
-
-    struct Listing {
-        uint256 optionId;
-        uint256 price;
+/**
+ * @title OptionsMarket
+ * @dev Contract for trading agricultural options on a secondary market
+ */
+contract OptionsMarket is ERC721URIStorage, Ownable {
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIds;
+    
+    struct OptionListing {
+        uint256 optionId;      // ID from the OptionsContract
         address seller;
+        uint256 price;
         bool active;
     }
-
-    Listing[] public listings;
-
-    event OptionListed(uint256 listingId);
-    event OptionTraded(uint256 listingId, address buyer);
-
-    constructor(address _optionsContract) {
+    
+    // Payment token (e.g., USDC)
+    IERC20 public paymentToken;
+    OptionsContract public optionsContract;
+    
+    // Mapping from listing ID to listing details
+    mapping(uint256 => OptionListing) public listings;
+    // Mapping from option ID to listing ID
+    mapping(uint256 => uint256) public optionToListing;
+    // Counter for listing IDs
+    Counters.Counter private _listingIds;
+    
+    event OptionListed(uint256 indexed listingId, uint256 indexed optionId, address indexed seller, uint256 price);
+    event OptionSold(uint256 indexed listingId, uint256 indexed optionId, address seller, address buyer, uint256 price);
+    event ListingCancelled(uint256 indexed listingId, uint256 indexed optionId);
+    
+    constructor(address _paymentToken, address _optionsContract) ERC721("ExproduceOption", "EXOP") Ownable(msg.sender) {
+        paymentToken = IERC20(_paymentToken);
         optionsContract = OptionsContract(_optionsContract);
-        paymentToken = IERC20(optionsContract.paymentToken());
     }
-
-    // Bank lists option for secondary sale
+    
+    /**
+     * @dev List an option for sale
+     * The seller must be the owner of the option in the OptionsContract
+     */
     function listOption(uint256 _optionId, uint256 _price) external {
-        OptionsContract.Option memory option = optionsContract.options(
-            _optionId
-        );
-        require(option.bank == msg.sender, "Not option owner");
-
-        listings.push(
-            Listing({
-                optionId: _optionId,
-                price: _price,
-                seller: msg.sender,
-                active: true
-            })
-        );
-        emit OptionListed(listings.length - 1);
+        // Get option details from OptionsContract
+        (
+            address farmer,
+            address bank,
+            uint256 strikePrice,
+            uint256 premium,
+            uint256 expiryDate,
+            uint256 quantity,
+            string memory cropType,
+            bool exercised,
+            bool cancelled
+        ) = optionsContract.getOption(_optionId);
+        
+        // Verify the caller is the farmer (owner of the option)
+        require(farmer == msg.sender, "Not the option owner");
+        require(!exercised, "Option already exercised");
+        require(!cancelled, "Option already cancelled");
+        require(block.timestamp < expiryDate, "Option expired");
+        
+        // Create a new listing
+        _listingIds.increment();
+        uint256 listingId = _listingIds.current();
+        
+        listings[listingId] = OptionListing({
+            optionId: _optionId,
+            seller: msg.sender,
+            price: _price,
+            active: true
+        });
+        
+        optionToListing[_optionId] = listingId;
+        
+        emit OptionListed(listingId, _optionId, msg.sender, _price);
     }
-
-    // Trader buys listed option
+    
+    /**
+     * @dev Buy a listed option
+     */
     function buyOption(uint256 _listingId) external {
-        Listing storage listing = listings[_listingId];
-        require(listing.active, "Listing inactive");
-
-        paymentToken.transferFrom(msg.sender, listing.seller, listing.price);
-        optionsContract.transferOption(listing.optionId, msg.sender);
+        OptionListing storage listing = listings[_listingId];
+        require(listing.active, "Listing not active");
+        
+        // Get option details to verify it's still valid
+        (
+            address farmer,
+            address bank,
+            uint256 strikePrice,
+            uint256 premium,
+            uint256 expiryDate,
+            uint256 quantity,
+            string memory cropType,
+            bool exercised,
+            bool cancelled
+        ) = optionsContract.getOption(listing.optionId);
+        
+        require(!exercised, "Option already exercised");
+        require(!cancelled, "Option already cancelled");
+        require(block.timestamp < expiryDate, "Option expired");
+        
+        // Transfer payment from buyer to seller
+        require(paymentToken.transferFrom(msg.sender, listing.seller, listing.price), "Payment failed");
+        
+        // Update the option ownership in the OptionsContract
+        // We need to add this function to the OptionsContract
+        optionsContract.transferOptionOwnership(listing.optionId, msg.sender);
+        
+        // Mark listing as inactive
         listing.active = false;
-        emit OptionTraded(_listingId, msg.sender);
+        
+        emit OptionSold(_listingId, listing.optionId, listing.seller, msg.sender, listing.price);
+    }
+    
+    /**
+     * @dev Cancel a listing
+     */
+    function cancelListing(uint256 _listingId) external {
+        OptionListing storage listing = listings[_listingId];
+        require(listing.active, "Listing not active");
+        require(listing.seller == msg.sender, "Not the seller");
+        
+        listing.active = false;
+        
+        emit ListingCancelled(_listingId, listing.optionId);
+    }
+    
+    /**
+     * @dev Get all active listings
+     */
+    function getActiveListing(uint256 _listingId) external view returns (
+        uint256 optionId,
+        address seller,
+        uint256 price,
+        bool active
+    ) {
+        OptionListing storage listing = listings[_listingId];
+        return (
+            listing.optionId,
+            listing.seller,
+            listing.price,
+            listing.active
+        );
     }
 }

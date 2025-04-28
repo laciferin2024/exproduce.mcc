@@ -46,17 +46,20 @@ const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvir
   // Deploy the OptionsMarket
   const optionsMarket = await deploy("OptionsMarket", {
     from: deployer,
-    args: [usdcAddress],
+    args: [usdcAddress, optionsContract.address],
     log: true,
     autoMine: true,
   });
 
-  console.log("OptionsMarket deployed at:", optionsMarket.address);
+  console.log("OptionsMarket deployed at:", optionsMarket.address)
 
-  // Get the deployed contracts to interact with them after deploying
-  const mockTokenContract = await hre.ethers.getContract<Contract>("MockUSDC", deployer);
-  const optionsContractInstance = await hre.ethers.getContract<Contract>("OptionsContract", deployer);
-  const optionsMarketInstance = await hre.ethers.getContract<Contract>("OptionsMarket", deployer);
+  // Set the OptionsMarket address in the OptionsContract
+  const optionsContractInstance = await hre.ethers.getContract<Contract>(
+    "OptionsContract",
+    deployer
+  )
+  await optionsContractInstance.setOptionsMarket(optionsMarket.address)
+  console.log("Set OptionsMarket address in OptionsContract")
 
   console.log("Deployment completed successfully!");
 };
