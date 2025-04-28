@@ -13,22 +13,30 @@ const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvir
 
   console.log("Deployer:", deployer);
 
-  // First, deploy a mock payment token (for testing purposes)
-  // In production, you would use an existing stablecoin like USDC
-  const mockToken = await deploy("MockUSDC", {
-    from: deployer,
-    contract: "MockERC20",
-    args: ["Mock USDC", "USDC", 6], // name, symbol, decimals
-    log: true,
-    autoMine: true,
-  });
 
-  console.log("Mock USDC deployed at:", mockToken.address);
+  let usdcAddress = (hre.network.config as any).usdc;
+
+  if (usdcAddress.trim()==""){
+    // First, deploy a mock payment token (for testing purposes)
+    // In production, you would use an existing stablecoin like USDC
+    const mockToken = await deploy("MockUSDC", {
+      from: deployer,
+      contract: "MockERC20",
+      args: ["Mock USDC", "USDC", 6], // name, symbol, decimals
+      log: true,
+      autoMine: true,
+    });
+    console.log("Mock USDC deployed at:", mockToken.address);
+    usdcAddress = mockToken.address;
+
+  }
+  
+  console.log("Using USDC at address:", usdcAddress);
 
   // Deploy the OptionsContract
   const optionsContract = await deploy("OptionsContract", {
     from: deployer,
-    args: [mockToken.address],
+    args: [usdcAddress],
     log: true,
     autoMine: true,
   });
@@ -38,7 +46,7 @@ const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvir
   // Deploy the OptionsMarket
   const optionsMarket = await deploy("OptionsMarket", {
     from: deployer,
-    args: [mockToken.address],
+    args: [usdcAddress],
     log: true,
     autoMine: true,
   });
