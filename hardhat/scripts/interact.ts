@@ -62,8 +62,8 @@ async function main() {
   const farmerBalance = await usdc.balanceOf(farmer.address)
   const bankBalance = await usdc.balanceOf(bank.address)
   console.log(`USDC Balances:`)
-  console.log(`- Farmer: ${ethers.utils.formatUnits(farmerBalance, 6)} USDC`)
-  console.log(`- Bank: ${ethers.utils.formatUnits(bankBalance, 6)} USDC`)
+  console.log(`- Farmer: ${ethers.formatUnits(farmerBalance, 6)} USDC`)
+  console.log(`- Bank: ${ethers.formatUnits(bankBalance, 6)} USDC`)
 
   // Create a new option
   console.log("\nCreating a new option...")
@@ -113,8 +113,8 @@ async function main() {
   console.log("Option details:")
   console.log(`- Farmer: ${option[0]}`)
   console.log(`- Bank: ${option[1]}`)
-  console.log(`- Strike Price: ${ethers.utils.formatUnits(option[2], 6)} USDC`)
-  console.log(`- Premium: ${ethers.utils.formatUnits(option[3], 6)} USDC`)
+  console.log(`- Strike Price: ${ethers.formatUnits(option[2], 6)} USDC`)
+  console.log(`- Premium: ${ethers.formatUnits(option[3], 6)} USDC`)
   console.log(
     `- Expiry Date: ${new Date(Number(option[4]) * 1000).toISOString()}`
   )
@@ -143,7 +143,7 @@ async function main() {
   console.log("Listing details:")
   console.log(`- Option ID: ${listing[0]}`)
   console.log(`- Seller: ${listing[1]}`)
-  console.log(`- Price: ${ethers.utils.formatUnits(listing[2], 6)} USDC`)
+  console.log(`- Price: ${ethers.formatUnits(listing[2], 6)} USDC`)
   console.log(`- Active: ${listing[3]}`)
 
   console.log("\nInteraction completed successfully!")
