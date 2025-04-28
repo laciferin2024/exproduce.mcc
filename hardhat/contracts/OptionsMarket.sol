@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "./OptionsContract.sol";
 
 /**
@@ -12,8 +11,9 @@ import "./OptionsContract.sol";
  * @dev Contract for trading agricultural options on a secondary market
  */
 contract OptionsMarket is ERC721URIStorage, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    // Replace Counters with simple uint256 counters
+    uint256 private _nextTokenId;
+    uint256 private _nextListingId;
     
     struct OptionListing {
         uint256 optionId;      // ID from the OptionsContract
@@ -30,8 +30,6 @@ contract OptionsMarket is ERC721URIStorage, Ownable {
     mapping(uint256 => OptionListing) public listings;
     // Mapping from option ID to listing ID
     mapping(uint256 => uint256) public optionToListing;
-    // Counter for listing IDs
-    Counters.Counter private _listingIds;
     
     event OptionListed(uint256 indexed listingId, uint256 indexed optionId, address indexed seller, uint256 price);
     event OptionSold(uint256 indexed listingId, uint256 indexed optionId, address seller, address buyer, uint256 price);
@@ -40,6 +38,8 @@ contract OptionsMarket is ERC721URIStorage, Ownable {
     constructor(address _paymentToken, address _optionsContract) ERC721("ExproduceOption", "EXOP") Ownable(msg.sender) {
         paymentToken = IERC20(_paymentToken);
         optionsContract = OptionsContract(_optionsContract);
+        _nextTokenId = 1;
+        _nextListingId = 1;
     }
     
     /**
@@ -67,8 +67,8 @@ contract OptionsMarket is ERC721URIStorage, Ownable {
         require(block.timestamp < expiryDate, "Option expired");
         
         // Create a new listing
-        _listingIds.increment();
-        uint256 listingId = _listingIds.current();
+        uint256 listingId = _nextListingId;
+        _nextListingId += 1;
         
         listings[listingId] = OptionListing({
             optionId: _optionId,
@@ -110,7 +110,6 @@ contract OptionsMarket is ERC721URIStorage, Ownable {
         require(paymentToken.transferFrom(msg.sender, listing.seller, listing.price), "Payment failed");
         
         // Update the option ownership in the OptionsContract
-        // We need to add this function to the OptionsContract
         optionsContract.transferOptionOwnership(listing.optionId, msg.sender);
         
         // Mark listing as inactive
@@ -148,5 +147,18 @@ contract OptionsMarket is ERC721URIStorage, Ownable {
             listing.price,
             listing.active
         );
+    }
+    
+    /**
+     * @dev Create a new token (for future use if needed)
+     */
+    function mintToken(address to, string memory tokenURI) external onlyOwner returns (uint256) {
+        uint256 tokenId = _nextTokenId;
+        _nextTokenId += 1;
+        
+        _mint(to, tokenId);
+        _setTokenURI(tokenId, tokenURI);
+        
+        return tokenId;
     }
 }
