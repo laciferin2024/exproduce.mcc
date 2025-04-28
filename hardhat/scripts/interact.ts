@@ -125,7 +125,7 @@ async function main() {
 
   // List the option on the market
   console.log("\nListing option on the market...")
-  const listingPrice = parseUnits("15", 6) // 15 USDC
+  const listingPrice = parseUnits("5", 6) // 5 USDC
   const listTx = await optionsMarket
     .connect(farmer)
     .listOption(optionId, listingPrice)
