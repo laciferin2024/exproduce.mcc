@@ -26,9 +26,6 @@ async function connectOptionsMarket(): Promise<OptionsMarket> {
   return connectContract<OptionsMarket>("OptionsMarket")
 }
 
-// USDC address on Amoy
-const USDC_ADDRESS = "0x6EEBe75caf9c579B3FBA9030760B84050283b50a"
-
 async function main() {
   // Get the network
   const network = await ethers.provider.getNetwork()
@@ -51,12 +48,15 @@ async function main() {
   const optionsMarket = await connectOptionsMarket()
 
   // For USDC, we still need to use getContractAt since it's not deployed by us
-  const usdc = (await ethers.getContractAt("IERC20", USDC_ADDRESS)) as IERC20
+
+  const usdcAddress = await optionsContract.connect(deployer).paymentToken()
+
+  const usdc = (await ethers.getContractAt("IERC20", usdcAddress)) as IERC20
 
   console.log("Contract addresses:")
   console.log(`- OptionsContract: ${await optionsContract.getAddress()}`)
   console.log(`- OptionsMarket: ${await optionsMarket.getAddress()}`)
-  console.log(`- USDC: ${USDC_ADDRESS}`)
+  console.log(`- USDC: ${usdcAddress}`)
 
   // Check USDC balances
   const farmerBalance = await usdc.balanceOf(farmer.address)

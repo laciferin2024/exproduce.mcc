@@ -25,7 +25,7 @@ const etherscanApiKey =
   process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW"
 const INFURA_KEY = process.env.INFURA_KEY || ""
 
-let NETWORK = process.env.NETWORK || "hardhat"
+let NETWORK = process.env.NETWORK || "amoy"
 console.log(`Using network: ${NETWORK}`)
 console.log(`Infura key is ${INFURA_KEY}`)
 
