@@ -1,8 +1,9 @@
 import bluebird from "bluebird"
 import hre, { ethers } from "hardhat"
 
-import { AddressLike, BaseContract, BigNumberish, Signer } from "ethers"
+import { AddressLike, BaseContract, Signer } from "ethers"
 import { ERC20, OptionsContract, OptionsMarket } from "../typechain-types"
+import { getAccount, getWallet, getAddress } from "./account"
 
 /*
 
@@ -19,90 +20,8 @@ export const DEFAULT_TOKEN_SUPPLY = ethers.parseEther("1000000000")
 // each service gets 100000 tokens
 export const DEFAULT_TOKENS_PER_ACCOUNT = ethers.parseEther("100000")
 
-/*
-
-  TYPES
-
-*/
-export interface Account {
-  name: string
-  address: string
-  privateKey: string
-}
-
-// Hardcoded accounts for testing
-const ACCOUNTS: Record<string, Account> = {
-  deployer: {
-    name: "deployer",
-    address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", // Default hardhat account
-    privateKey:
-      "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-  },
-  farmer: {
-    name: "farmer",
-    address: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", // Second hardhat account
-    privateKey:
-      "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d",
-  },
-  bank: {
-    name: "bank",
-    address: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", // Third hardhat account
-    privateKey:
-      "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
-  },
-  trader: {
-    name: "trader",
-    address: "0x90F79bf6EB2c4f870365E785982E1f101E93b906", // Fourth hardhat account
-    privateKey:
-      "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
-  },
-}
-
-/*
-
-  WALLET UTILS
-
-*/
-export const getAccount = (name: string): Account => {
-  const account = ACCOUNTS[name]
-  if (!account) {
-    throw new Error(`Account ${name} not found`)
-  }
-  return account
-}
-
-export const getWallet = (name: string) => {
-  const account = getAccount(name)
-  return new ethers.Wallet(account.privateKey, ethers.provider)
-}
-
-export const getAddress = (name: string) => {
-  const account = getAccount(name)
-  return account.address
-}
-
-export const getRandomWallet = () => {
-  return ethers.Wallet.createRandom()
-}
-
-export const transferEther = async (
-  fromAccount: Account,
-  toAccount: Account,
-  amount: BigNumberish
-) => {
-  const signer = new hre.ethers.Wallet(
-    fromAccount.privateKey,
-    hre.ethers.provider
-  )
-  const tx = await signer.sendTransaction({
-    to: toAccount.address,
-    value: amount,
-  })
-  await tx.wait()
-  console.log(
-    `Moved ${amount} ETHER from ${fromAccount.name} (${fromAccount.address}) to ${toAccount.name} (${toAccount.address}) - ${tx.hash}.`
-  )
-}
+// Re-export account utilities
+export { getAccount, getWallet, getAddress }
 
 /*
 
@@ -124,6 +43,18 @@ export async function deployContract<T extends BaseContract>(
   CONTRACT INTERACTION HELPERS
 
 */
+export async function connectContract<T extends any>(name: string): Promise<T> {
+  const deployment = await hre.deployments.get(name)
+  const factory = await hre.ethers.getContractFactory(name)
+  const contract = factory.attach(deployment.address) as unknown as T
+  return contract
+}
+
+export async function getContractAddress(name: string): Promise<AddressLike> {
+  const deployment = await hre.deployments.get(name)
+  return deployment.address
+}
+
 export async function getOptionsContract(
   address: string,
   signer?: Signer
@@ -155,4 +86,13 @@ export async function getERC20(
     address,
     signer
   )) as unknown as ERC20
+}
+
+// Helper functions for our specific contracts
+export async function connectOptionsContract(): Promise<OptionsContract> {
+  return connectContract<OptionsContract>("OptionsContract")
+}
+
+export async function connectOptionsMarket(): Promise<OptionsMarket> {
+  return connectContract<OptionsMarket>("OptionsMarket")
 }
