@@ -1,22 +1,23 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DeployFunction } from "hardhat-deploy/types";
-import { Contract } from "ethers";
+import { HardhatRuntimeEnvironment } from "hardhat/types"
+import { DeployFunction } from "hardhat-deploy/types"
+import { Contract } from "ethers"
 
 /**
  * Deploys the Exproduce contracts
  *
  * @param hre HardhatRuntimeEnvironment object.
  */
-const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployer } = await hre.getNamedAccounts();
-  const { deploy } = hre.deployments;
+const deployExproduce: DeployFunction = async function (
+  hre: HardhatRuntimeEnvironment
+) {
+  const { deployer } = await hre.getNamedAccounts()
+  const { deploy } = hre.deployments
 
-  console.log("Deployer:", deployer);
+  console.log("Deployer:", deployer)
 
+  let usdcAddress = (hre.network.config as any).usdc
 
-  let usdcAddress = (hre.network.config as any).usdc;
-
-  if (usdcAddress.trim()==""){
+  if (!usdcAddress || usdcAddress.trim() == "") {
     // First, deploy a mock payment token (for testing purposes)
     // In production, you would use an existing stablecoin like USDC
     const mockToken = await deploy("MockUSDC", {
@@ -25,13 +26,12 @@ const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvir
       args: ["Mock USDC", "USDC", 6], // name, symbol, decimals
       log: true,
       autoMine: true,
-    });
-    console.log("Mock USDC deployed at:", mockToken.address);
-    usdcAddress = mockToken.address;
-
+    })
+    console.log("Mock USDC deployed at:", mockToken.address)
+    usdcAddress = mockToken.address
   }
-  
-  console.log("Using USDC at address:", usdcAddress);
+
+  console.log("Using USDC at address:", usdcAddress)
 
   // Deploy the OptionsContract
   const optionsContract = await deploy("OptionsContract", {
@@ -39,9 +39,9 @@ const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvir
     args: [usdcAddress],
     log: true,
     autoMine: true,
-  });
+  })
 
-  console.log("OptionsContract deployed at:", optionsContract.address);
+  console.log("OptionsContract deployed at:", optionsContract.address)
 
   // Deploy the OptionsMarket
   const optionsMarket = await deploy("OptionsMarket", {
@@ -49,7 +49,7 @@ const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvir
     args: [usdcAddress, optionsContract.address],
     log: true,
     autoMine: true,
-  });
+  })
 
   console.log("OptionsMarket deployed at:", optionsMarket.address)
 
@@ -61,11 +61,11 @@ const deployExproduce: DeployFunction = async function (hre: HardhatRuntimeEnvir
   await optionsContractInstance.setOptionsMarket(optionsMarket.address)
   console.log("Set OptionsMarket address in OptionsContract")
 
-  console.log("Deployment completed successfully!");
-};
+  console.log("Deployment completed successfully!")
+}
 
-deployExproduce.id = "deployExproduce";
+deployExproduce.id = "deployExproduce"
 
-export default deployExproduce;
+export default deployExproduce
 
-module.exports.tags = ["all", "exproduce"];
+module.exports.tags = ["all", "exproduce"]

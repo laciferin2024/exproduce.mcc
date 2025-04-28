@@ -49,7 +49,7 @@ const config: HardhatUserConfig = {
       forking: {
         url: `https://polygon-amoy.g.alchemy.com/v2/${providerApiKey}`,
         enabled: true,
-        usdc: "0x6EEBe75caf9c579B3FBA9030760B84050283b50a",
+        usdc: "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
         // enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
       chainId: 1337,
@@ -72,7 +72,9 @@ const config: HardhatUserConfig = {
     amoy: {
       url: `https://polygon-amoy.g.alchemy.com/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],
-      usdc: "0x6EEBe75caf9c579B3FBA9030760B84050283b50a",
+      darts: "0xAF5152E03C9519983a5E7e8b44ca1A396457607e",
+      // usdc: "0xAF5152E03C9519983a5E7e8b44ca1A396457607e",
+      usdc: "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
     },
     baseSepolia: {
       url: "https://sepolia.base.org",
