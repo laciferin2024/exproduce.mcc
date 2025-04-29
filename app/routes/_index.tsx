@@ -18,11 +18,11 @@ export default function Index() {
               alt="Exproduce"
               className="h-16 mx-auto block dark:hidden"
             />
-            <img
-              src="/logo-light.png"
+            {/* <img
+              src="/logo-light.jpeg"
               alt="Exproduce"
               className="h-16 mx-auto hidden dark:block"
-            />
+            /> */}
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Agricultural Options Trading
