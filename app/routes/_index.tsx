@@ -16,7 +16,7 @@ export default function Index() {
             <img
               src="/logo.png"
               alt="Exproduce"
-              className="h-16 mx-auto block dark:hidden"
+              className="h-26 mx-auto block dark:hidden"
             />
             {/* <img
               src="/logo-light.jpeg"
