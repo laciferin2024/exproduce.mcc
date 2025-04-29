@@ -11,7 +11,7 @@ declare module "@remix-run/node" {
 export default defineConfig({
   server: {
     port: 5173,
-    // strictPort: true,
+    strictPort: true,
     hmr: {
       port: 8003,
       protocol: "ws",
@@ -19,6 +19,7 @@ export default defineConfig({
   },
   plugins: [
     remix({
+      ssr: false, //for rainbow
       future: {
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
