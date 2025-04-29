@@ -1,43 +1,49 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction, LinksFunction } from "@remix-run/node"
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "@remix-run/react";
+} from "@remix-run/react"
+import { WagmiConfig } from "wagmi"
+import { RainbowKitProvider, ConnectButton } from "@rainbow-me/rainbowkit"
+import { config } from "~/utils/wagmi.client"
 
 export const meta: MetaFunction = () => {
   return [
     { title: "Exproduce Options Platform" },
     { name: "description", content: "Agricultural Options Trading Platform" },
-  ];
-};
+  ]
+}
 
-import type { LinksFunction } from "@remix-run/node";
+import styles from "./tailwind.css?url"
 
-import styles from "./tailwind.css?url";
-
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: styles },
-];
-
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }]
 
 export default function App() {
   return (
-    <html lang="en" className="supports-[\n(container-type:inline-size)]:container-type-inline-size">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <link rel="stylesheet" href="/styles/global.css" />
       </head>
       <body>
-        <Outlet />
+        <WagmiConfig config={config}>
+          <RainbowKitProvider chains={config.chains}>
+            <div className="min-h-screen flex flex-col">
+              <header className="flex justify-end p-4 border-b">
+                <ConnectButton />
+              </header>
+              <Outlet />
+            </div>
+          </RainbowKitProvider>
+        </WagmiConfig>
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
-  );
+  )
 }
