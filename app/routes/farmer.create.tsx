@@ -4,13 +4,31 @@ import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { useContract } from "src/hooks/useContract"
 import { useAccount } from "wagmi"
+import { parseUnits } from "viem"
+
+// Helper function to get default expiry date (30 days from now)
+const getDefaultExpiryDate = () => {
+  const date = new Date()
+  date.setDate(date.getDate() + 30)
+  return date.toISOString().split("T")[0]
+}
 
 export default function CreateOption() {
   const { address } = useAccount()
-  const { optionsContract } = useContract()
+  const { optionsContract, usdcContract, walletClient } = useContract()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  // Default values
+  const defaultValues = {
+    bank: "0x1234567890123456789012345678901234567890", // Example bank address
+    strikePrice: "100.00", // $100 per unit
+    premium: "10.00", // $10 premium
+    expiryDate: getDefaultExpiryDate(),
+    quantity: "1000", // 1000 units
+    cropType: "corn",
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -22,8 +40,10 @@ export default function CreateOption() {
     const formData = new FormData(e.currentTarget)
     const params = {
       bank: formData.get("bank") as string,
-      strikePrice: BigInt(formData.get("strikePrice") as string),
-      premium: BigInt(formData.get("premium") as string),
+      strikePrice: BigInt(
+        Math.round(Number(formData.get("strikePrice")) * 100)
+      ),
+      premium: BigInt(Math.round(Number(formData.get("premium")) * 100)),
       expiryDate: BigInt(
         Math.floor(
           new Date(formData.get("expiryDate") as string).getTime() / 1000
@@ -32,6 +52,25 @@ export default function CreateOption() {
       quantity: BigInt(formData.get("quantity") as string),
       cropType: formData.get("cropType") as string,
     }
+
+    // 1. Parse premium amount (USDC uses 6 decimals)
+    const premiumAmount = parseUnits(
+      formData.get("premium") as string,
+      6 // USDC decimals
+    )
+
+    // 2. Approve USDC spending first
+    const approveHash = await usdcContract.write.approve([
+      optionsContract.address,
+      premiumAmount,
+    ])
+
+    console.log("Approve hash:", approveHash)
+
+    // // Wait for approval transaction confirmation
+    // await walletClient.waitForTransactionReceipt({
+    //   hash: approveHash,
+    // })
 
     try {
       setIsLoading(true)
@@ -85,6 +124,7 @@ export default function CreateOption() {
                 required
                 placeholder="0x..."
                 className="w-full"
+                defaultValue={defaultValues.bank}
               />
             </div>
 
@@ -98,6 +138,7 @@ export default function CreateOption() {
                 required
                 step="0.01"
                 className="w-full"
+                defaultValue={defaultValues.strikePrice}
               />
             </div>
 
@@ -109,6 +150,7 @@ export default function CreateOption() {
                 required
                 step="0.01"
                 className="w-full"
+                defaultValue={defaultValues.premium}
               />
             </div>
 
@@ -119,6 +161,7 @@ export default function CreateOption() {
                 type="date"
                 required
                 className="w-full"
+                defaultValue={defaultValues.expiryDate}
               />
             </div>
 
@@ -129,13 +172,18 @@ export default function CreateOption() {
                 type="number"
                 required
                 className="w-full"
+                defaultValue={defaultValues.quantity}
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Crop Type</label>
               <Input asChild className="[&>select]:pr-8">
-                <select name="cropType" required>
+                <select
+                  name="cropType"
+                  required
+                  defaultValue={defaultValues.cropType}
+                >
                   <option value="corn">Corn</option>
                   <option value="wheat">Wheat</option>
                   <option value="soybean">Soybean</option>
