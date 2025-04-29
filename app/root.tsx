@@ -7,8 +7,13 @@ import {
   ScrollRestoration,
 } from "@remix-run/react"
 import { WagmiConfig } from "wagmi"
-import { RainbowKitProvider, ConnectButton } from "@rainbow-me/rainbowkit"
+import {
+  RainbowKitProvider,
+  ConnectButton,
+  darkTheme,
+} from "@rainbow-me/rainbowkit"
 import { config } from "~/utils/wagmi.client"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 export const meta: MetaFunction = () => {
   return [
@@ -31,19 +36,28 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <WagmiConfig config={config}>
-          <RainbowKitProvider chains={config.chains}>
-            <div className="min-h-screen flex flex-col">
-              <header className="flex justify-end p-4 border-b">
-                <ConnectButton />
-              </header>
-              <Outlet />
-            </div>
-          </RainbowKitProvider>
-        </WagmiConfig>
+        <Providers>
+          <div className="min-h-screen flex flex-col">
+            <header className="flex justify-end p-4 border-b">
+              <ConnectButton />
+            </header>
+            <Outlet />
+          </div>
+        </Providers>
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function Providers({ children }: { children: React.ReactNode }) {
+  const queryClient = new QueryClient()
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiConfig config={config}>
+        <RainbowKitProvider theme={darkTheme()}>{children}</RainbowKitProvider>
+      </WagmiConfig>
+    </QueryClientProvider>
   )
 }

@@ -1,18 +1,9 @@
-import { http, createConfig } from "@wagmi/core"
-import { mainnet, polygonAmoy } from "@wagmi/core/chains"
-import { createClient } from "viem"
+import { getDefaultConfig } from "@rainbow-me/rainbowkit"
+import { polygonAmoy } from "wagmi/chains"
 
-export const config = createConfig({
-  chains: [polygonAmoy, mainnet],
-  client({ chain }) {
-    return createClient({
-      chain,
-      transport: http(),
-    })
-  },
-})
-
-export const wagmiClient = createClient({
-  chain: polygonAmoy,
-  transport: http(),
+export const config = getDefaultConfig({
+  appName: "ExProduce",
+  projectId: "fd4b30c6bd5fa4efa42fec80a2231c25", // Replace with your WalletConnect Project ID
+  chains: [polygonAmoy],
+  ssr: true,
 })
