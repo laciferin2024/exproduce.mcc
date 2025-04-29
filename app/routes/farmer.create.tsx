@@ -4,18 +4,29 @@ import { Form } from "@remix-run/react"
 import type { CreateOptionParams } from "~/types/contracts"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
+import { ContractManager } from "~/utils/contracts"
 
 export const clientAction: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
-  const params = {
-    bank: formData.get("bank") as string,
+
+  /*
+  bank: formData.get("bank") as string,
     strikePrice: BigInt(formData.get("strikePrice") as string),
-    premium: BigInt(formData.get("premium") as string),
+    premium: String(formData.get("premium") as string),
     expiryDate: BigInt(
       new Date(formData.get("expiryDate") as string).getTime() / 1000
     ),
     quantity: BigInt(formData.get("quantity") as string),
     cropType: formData.get("cropType") as string,
+
+    */
+  const params = {
+    bank: "0x1234567890123456789012345678901234567890",
+    strikePrice: BigInt(1000000),
+    premium: "1000",
+    expiryDate: BigInt(Math.floor(Date.now() / 1000) + 86400 * 30),
+    quantity: BigInt(1000),
+    cropType: "corn",
   }
 
   try {
