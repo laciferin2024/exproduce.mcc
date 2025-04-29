@@ -5,11 +5,28 @@ import type { CreateOptionParams } from "~/types/contracts"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 
-// export const action: ActionFunction = async ({ request }) => {
-//   const formData = await request.formData()
-//   // Type-safe form handling
-//   return null
-// }
+export const clientAction: ActionFunction = async ({ request }) => {
+  const formData = await request.formData()
+  const params = {
+    bank: formData.get("bank") as string,
+    strikePrice: BigInt(formData.get("strikePrice") as string),
+    premium: BigInt(formData.get("premium") as string),
+    expiryDate: BigInt(
+      new Date(formData.get("expiryDate") as string).getTime() / 1000
+    ),
+    quantity: BigInt(formData.get("quantity") as string),
+    cropType: formData.get("cropType") as string,
+  }
+
+  try {
+    const contractManager = new ContractManager()
+    await contractManager.connect()
+    const optionId = await contractManager.createOption(params)
+    return { optionId }
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Transaction failed" }
+  }
+}
 
 export default function CreateOption() {
   const [cropType, setCropType] = useState<string>("")
