@@ -106,7 +106,8 @@ const config: _Config = {
       chainId: 80002,
       accounts: PRIVATE_KEYS,
       saveDeployments: true,
-      usdc: "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582", // Amoy USDC
+      // usdc: "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582", // Amoy USDC
+      usdc: "0xAF5152E03C9519983a5E7e8b44ca1A396457607e", // Darts
       faucet: ["https://faucet.polygon.technology"],
     },
     baseSepolia: {
