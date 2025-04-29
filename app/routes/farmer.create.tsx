@@ -59,10 +59,12 @@ export default function CreateOption() {
       6 // USDC decimals
     )
 
+    console.log("Parsed premium amount:", premiumAmount)
+
     // 2. Approve USDC spending first
     const approveHash = await usdcContract.write.approve([
       optionsContract.address,
-      premiumAmount,
+      premiumAmount.toString(),
     ])
 
     console.log("Approve hash:", approveHash)
@@ -86,6 +88,8 @@ export default function CreateOption() {
         params.quantity,
         params.cropType,
       ])
+
+      console.log("Transaction hash:", txHash)
 
       setSuccess(`Option created successfully! Transaction hash: ${txHash}`)
     } catch (err) {
