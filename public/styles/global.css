@@ -1,0 +1,12 @@
+/* Global styles for Exproduce platform */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Container Queries polyfill */
+@container (min-width: 640px) {
+  .supports-container-type-inline-size {
+    container-type: inline-size;
+  }
+}

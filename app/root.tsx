@@ -16,12 +16,13 @@ export const meta: MetaFunction = () => {
 
 export default function App() {
   return (
-    <html lang="en">
+    <html lang="en" className="supports-[\n(container-type:inline-size)]:container-type-inline-size">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <Meta />
         <Links />
+        <link rel="stylesheet" href="/styles/global.css" />
       </head>
       <body>
         <Outlet />

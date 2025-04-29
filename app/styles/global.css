@@ -1,0 +1,29 @@
+:root {
+  --radius: 0.5rem;
+  --spacing-unit: 0.25rem;
+  
+  /* Light theme */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+}
+
+.dark {
+  /* Dark theme */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+}
+
+@custom-media --sm (width >= 640px);
+@custom-media --md (width >= 768px);
+@custom-media --lg (width >= 1024px);
+
+:root {
+  --space-1: calc(1 * var(--spacing-unit));
+  --space-2: calc(2 * var(--spacing-unit));
+  --space-4: calc(4 * var(--spacing-unit));
+  --space-8: calc(8 * var(--spacing-unit));
+}

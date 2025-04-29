@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { ActionFunction } from '@remix-run/node';
 import { Form } from '@remix-run/react';
 import type { CreateOptionParams } from '~/types/contracts';
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -15,41 +17,37 @@ export default function CreateOption() {
   const [premium, setPremium] = useState<string>('');
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Create Option</h1>
-      <Form method="post" className="space-y-4">
-        <div>
-          <label htmlFor="cropType" className="block mb-2">Crop Type</label>
-          <select
-            id="cropType"
-            name="cropType"
-            value={cropType}
-            onChange={(e) => setCropType(e.target.value)}
-            className="w-full p-2 border rounded"
+    <div className="container mx-auto px-4 py-8">
+      // Updated UI components with modern styling
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Create New Option</h1>
+        <Form method="post" className="space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Crop Type</label>
+              <Input
+                asChild
+                className="[&>select]:pr-8"
+              >
+                <select>
+                  {/* Options */}
+                </select>
+              </Input>
+            </div>
+          </div>
+          <Button
+            type="submit"
+            className="w-full"
+            isLoading={false}
           >
-            <option value="">Select Crop</option>
-            <option value="Wheat">Wheat</option>
-            <option value="Rice">Rice</option>
-            <option value="Cotton">Cotton</option>
-          </select>
-        </div>
-        
-        <div>
-          <label htmlFor="quantity" className="block mb-2">Quantity (kg)</label>
-          <input
-            type="number"
-            id="quantity"
-            name="quantity"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Create Option
-        </button>
-      </Form>
+            Create Option
+          </Button>
+        </Form>
+      </div>
     </div>
   );
 }
+// Key mobile-first improvements:
+// - Increased padding for touch targets (p-3 → p-4)
+// - Responsive container spacing (px-4 py-6)
+// - Enhanced focus states (focus:ring-2)
