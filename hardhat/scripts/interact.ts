@@ -35,8 +35,8 @@ async function main() {
   const deployer = await ethers.getSigner(
     "0x823531B7c7843D8c3821B19D70cbFb6173b9Cb02"
   )
-  const farmer = getWallet("farmer")
-  const bank = getWallet("bank")
+  const farmer = getWallet("farmer", hre.ethers.provider)
+  const bank = getWallet("bank", hre.ethers.provider)
 
   console.log(`Using accounts:`)
   console.log(`- Deployer: ${deployer.address}`)
@@ -69,7 +69,7 @@ async function main() {
   console.log("\nCreating a new option...")
 
   // Approve USDC spending
-  const premium = parseUnits("10", 6) // 10 USDC
+  const premium = parseUnits("1", 6) // 10 USDC
   const approveTx = await usdc
     .connect(farmer)
     .approve(await optionsContract.getAddress(), premium)
@@ -77,7 +77,7 @@ async function main() {
   console.log("Approved USDC spending for premium")
 
   // Create option
-  const strikePrice = parseUnits("100", 6) // 100 USDC per unit
+  const strikePrice = parseUnits("10", 6) // 100 USDC per unit
   const quantity = 5n // 5 units
   const expiryDate = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30) // 30 days from now
 
@@ -145,6 +145,8 @@ async function main() {
   console.log(`- Seller: ${listing[1]}`)
   console.log(`- Price: ${ethers.formatUnits(listing[2], 6)} USDC`)
   console.log(`- Active: ${listing[3]}`)
+
+  console.table(listing)
 
   console.log("\nInteraction completed successfully!")
 }
