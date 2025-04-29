@@ -135,7 +135,7 @@ async function main() {
   const optionListedEvent = listReceipt?.events?.find(
     (e) => e.event === "OptionListed"
   )
-  const listingId = optionListedEvent?.args?.[0] || 0n
+  const listingId = optionListedEvent?.args?.[0] || 1n
   console.log(`Option listed with listing ID: ${listingId.toString()}`)
 
   // Get listing details
