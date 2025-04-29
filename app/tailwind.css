@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,16 +7,10 @@
 html, body {
   @apply bg-white dark:bg-gray-950;
   @apply text-gray-800 dark:text-gray-200;
-  @apply flex flex-col items-center justify-center min-h-screen;
-  @apply p-4;
-  background: linear-gradient(to bottom right, theme(colors.primary.DEFAULT), theme(colors.primary.foreground));
+  @apply flex flex-col items-center justify-center min-h-screen p-4;
 }
 
-@media (prefers-color-scheme: dark) {
-  html.dark, body.dark {
-    background: transparent;
-  }
-}
+/* Dark mode handled through tailwind dark: modifiers */
 
 button {
   @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
