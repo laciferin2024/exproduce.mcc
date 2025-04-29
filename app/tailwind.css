@@ -7,6 +7,13 @@ html, body {
   @apply text-gray-800 dark:text-gray-200;
   @apply flex flex-col items-center justify-center min-h-screen;
   @apply p-4;
+  background: linear-gradient(to bottom right, theme(colors.primary.DEFAULT), theme(colors.primary.foreground));
+}
+
+@media (prefers-color-scheme: dark) {
+  html.dark, body.dark {
+    background: transparent;
+  }
 }
 
 button {
