@@ -18,7 +18,6 @@ export default function CreateOption() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      // Updated UI components with modern styling
       <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Create New Option</h1>
         <Form method="post" className="space-y-6">
