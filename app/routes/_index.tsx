@@ -14,12 +14,12 @@ export default function Index() {
         <header className="text-center mb-16">
           <div className="mb-8">
             <img
-              src="/logo-light.png"
+              src="/logo.png"
               alt="Exproduce"
               className="h-16 mx-auto block dark:hidden"
             />
             <img
-              src="/logo-dark.png"
+              src="/logo-white.png"
               alt="Exproduce"
               className="h-16 mx-auto hidden dark:block"
             />
