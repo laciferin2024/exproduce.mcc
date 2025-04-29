@@ -14,6 +14,15 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+import type { LinksFunction } from "@remix-run/node";
+
+import styles from "./tailwind.css?url";
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: styles },
+];
+
+
 export default function App() {
   return (
     <html lang="en" className="supports-[\n(container-type:inline-size)]:container-type-inline-size">

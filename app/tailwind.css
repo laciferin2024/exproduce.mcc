@@ -89,9 +89,22 @@ button {
   }
 }
 
+@layer components {
+  .bg-background {
+    @apply bg-[hsl(var(--background))];
+  }
+
+  .text-foreground {
+    @apply text-[hsl(var(--foreground))];
+  }
+}
 
 
 @layer base {
+  .border-border {
+    border-color: var(--border);
+  }
+  
   * {
     @apply border-border;
   }
