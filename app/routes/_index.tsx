@@ -19,7 +19,7 @@ export default function Index() {
               className="h-16 mx-auto block dark:hidden"
             />
             <img
-              src="/logo-white.png"
+              src="/logo-light.png"
               alt="Exproduce"
               className="h-16 mx-auto hidden dark:block"
             />
