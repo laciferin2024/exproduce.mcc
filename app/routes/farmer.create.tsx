@@ -29,7 +29,10 @@ export default function CreateOption() {
                 className="[&>select]:pr-8"
               >
                 <select>
-                  {/* Options */}
+                  <option value="corn">Corn</option>
+                  <option value="wheat">Wheat</option>
+                  <option value="soybean">Soybean</option>
+                  <option value="rice">Rice</option>
                 </select>
               </Input>
             </div>
