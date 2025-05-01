@@ -2,10 +2,10 @@ import { useAccount, useDisconnect, useWalletClient } from "wagmi"
 
 import { getContract } from "viem"
 
-import { abi as OptionsContractAbi } from "../../hardhat/deployments/amoy/OptionsContract.json"
-import { abi as OptionsMarketAbi } from "../../hardhat/deployments/amoy/OptionsMarket.json"
-import { abi as ERC20Abi } from "../../hardhat/artifacts/contracts/MockERC20.sol/MockERC20.json"
-import { OptionsContract, OptionsMarket } from "hardhat/typechain-types"
+import { abi as OptionsContractAbi } from "@hardhat/artifacts/contracts/OptionsContract.sol/OptionsContract.json"
+import { abi as OptionsMarketAbi } from "@hardhat/artifacts/contracts/OptionsMarket.sol/OptionsMarket.json"
+import { abi as ERC20Abi } from "@hardhat/artifacts/contracts/MockERC20.sol/MockERC20.json"
+// import { OptionsContract, OptionsMarket } from "hardhat/typechain-types"
 
 export function useContract() {
   const { address } = useAccount()
