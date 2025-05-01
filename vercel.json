@@ -11,5 +11,10 @@
       "src": "/(.*)",
       "dest": "/"
     }
-  ]
+  ],
+  "installCommand": "bun install && cd hardhat && bun i",
+  "buildCommand": "bun run build",
+  "devCommand": "bun run dev",
+  "outputDirectory": "build",
+  "public": true
 }
