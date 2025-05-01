@@ -1,40 +1,37 @@
-# Welcome to Remix!
+# Exproduce
 
-- 📖 [Remix docs](https://remix.run/docs)
+Exproduce is a decentralized platform for agricultural options trading, leveraging blockchain technology to provide secure and transparent transactions. The platform utilizes the DARTS token for seamless trading and offers a range of features tailored for farmers, traders, and institutions.
 
-## Development
+## Key Features
 
-Run the dev server:
+- **Decentralized Trading**: Trade agricultural commodities with confidence on our decentralized platform.
+- **DARTS Token**: Use the DARTS token for transactions, ensuring fast and secure trades.
+- **For Farmers**: Hedge against price fluctuations and secure future revenue with options contracts.
+- **For Traders**: Access unique agricultural options and participate in a growing decentralized market.
+- **For Institutions**: Provide liquidity and earn rewards while supporting the agricultural ecosystem.
 
-```shellscript
-npm run dev
-```
+## Setup Instructions
+
+1. Clone the repository: `git clone https://github.com/laciferin2024/exproduce.mcp`
+2. Navigate to the project directory: `cd exproduce`
+3. Install dependencies: `bun install`
+4. Build the project: `bun run build`
+5. Start the development server: `bun run dev`
 
 ## Deployment
 
-First, build your app for production:
+The platform is deployed on Polygon's testnet. Ensure you have the necessary configurations in place for deployment.
 
-```sh
-npm run build
-```
+## Usage Examples
 
-Then run the app in production mode:
+- **Farmers**: [Start Trading](https://exproduce.vercel.app/farmer/create)
+- **Traders**: [View Markets](https://exproduce.vercel.app/markets)
+- **Institutions**: [Learn More](https://exproduce.vercel.app/institutions)
 
-```sh
-npm start
-```
+## Contribution Guidelines
 
-Now you'll need to pick a host to deploy it to.
+We welcome contributions! Please fork the repository and submit a pull request for review.
 
-### DIY
+## Contact
 
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+For support or collaboration, please contact us at [support@exproduce.com](mailto:hiro@decenterai.com).
