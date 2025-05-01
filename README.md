@@ -35,3 +35,7 @@ We welcome contributions! Please fork the repository and submit a pull request f
 ## Contact
 
 For support or collaboration, please contact us at [support@exproduce.com](mailto:hiro@decenterai.com).
+
+## Pitch Deck
+
+Access our pitch deck [here](https://nas.decenterai.com/Exproduce-Pitch.pdf).
