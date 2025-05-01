@@ -2,8 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "remix.config.js",
-      "use": "@vercel/remix"
+      "src": "vite.config.ts",
+      "use": "@vercel/vite"
     }
   ],
   "routes": [
@@ -12,7 +12,7 @@
       "dest": "/"
     }
   ],
-  "installCommand": "bun install && cd hardhat && bun i",
+  "installCommand": "bun install",
   "buildCommand": "bun run build",
   "devCommand": "bun run dev",
   "outputDirectory": "build",
