@@ -1,3 +1,5 @@
+> Pitch Deck available at: https://nas.decenterai.com/Exproduce-Pitch.pdf
+
 # Exproduce
 
 Exproduce is a decentralized platform for agricultural options trading, leveraging blockchain technology to provide secure and transparent transactions. The platform utilizes the DARTS token for seamless trading and offers a range of features tailored for farmers, traders, and institutions.
